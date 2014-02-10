@@ -38,7 +38,7 @@ http://www.opensource.org/licenses/mit-license.php
                 return true;
 
             if (settings.direction === 'horizontal')
-                items.css({float: 'left'});
+                items.css({'float': 'left'});
 
             items.find("> a").css({lineHeight: settings.height + 'px', padding: '0 10px 0 0'});
 
@@ -52,10 +52,8 @@ http://www.opensource.org/licenses/mit-license.php
             ticker.width( ticker_width );
             elements[index] = {
                 timer: 0,
-                current: 0,
                 items: items,
                 ticker: ticker,
-                left: 0
             };
 
             elements[index].timer = setTimeout( function(){
@@ -82,40 +80,20 @@ http://www.opensource.org/licenses/mit-license.php
             return;
 
         clearTimeout( elements[index].timer );
-        var items = elements[index].items;
-        var current = elements[index].current;
+        var items = $(elements[index].ticker).find("> li");
         var ticker = elements[index].ticker;
-        var left = elements[index].left;
 
-        if (current >= items.length - 1){
-
-            current = 0;
-            ticker.fadeOut('fast', function(){
-                ticker.css('margin-left', ticker.parent().width() + 'px');
-                ticker.show();
-                ticker.animate({
-                    marginLeft: 0
-                }, $.fn.ecoNewsTicker.settings.speed * 1000 );
-            });
-
-            elements[index].current = current;
-            elements[index].left = 0;
-            elements[index].timer = setTimeout(function(){
-                slide( index );
-            }, $.fn.ecoNewsTicker.settings.waitInterval * 1000 );
-
-            return true;
-
-        }
-
-        left += $(items[current]).width();
-        current++;
-        ticker.animate({
+        var left = $(items[0]).width();
+        $(items[0]).animate({
             marginLeft: (left * -1) + 'px'
-        }, $.fn.ecoNewsTicker.settings.speed * 1000 );
+        }, $.fn.ecoNewsTicker.settings.speed * 1000, function(){
 
-        elements[index].current = current;
-        elements[index].left = left;
+            $(items[0]).hide().css('margin-left', 0);
+            $(ticker).append($(items[0]));
+            $(items[0]).show();
+
+        } );
+
         elements[index].timer = setTimeout(function(){
             slide( index );
         }, $.fn.ecoNewsTicker.settings.waitInterval * 1000 );
